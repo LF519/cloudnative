@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  http-server:
+    image: httpserver:latest
+    container_name: http-server
+    command: ['./project']
+    ports:
+      - "18080:8080"
