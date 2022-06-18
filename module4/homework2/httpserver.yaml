@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: httpserver
+  name: httpserver
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: httpserver
+  template:
+    metadata:
+      labels:
+        app: httpserver
+    spec:
+      containers:
+        - image: lfdockerhub/httpserver:v1.0.0
+          imagePullPolicy: IfNotPresent
+          name: httpserver
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:  # 资源需求和 QoS 保证
+            limits:
+              cpu: "1"
+            requests:
+              cpu: "100m"
+          livenessProbe:  # 探活
+            httpGet:
+              scheme: HTTP
+              port: 8080
+              path: /healthz
+          lifecycle:  # 优雅终止
+            preStop:
+              exec:
+                command: [ "/bin/sh","-c","kill -15 1" ]  # 在代码中已经设置了监听SIGTERM信号
+          volumeMounts:
+            - name: config  # 配置与代码分离
+              mountPath: "/usr/local/httpserver/config"
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: httpserver
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpserver-service
+  namespace: default
+spec:
+  selector:
+    app: httpserver
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 8080
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpserver-ingress
+  namespace: default
+sp
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: httpserver-service
+                port:
+                  number: 9090
+            path: /httpserver
+            pathType: Prefix
+      # 由于不是在公有云上, 无法申请externalIP, 这个实际上不起作用
+      host: cncamp.com
+
