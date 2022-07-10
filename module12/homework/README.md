@@ -6,7 +6,7 @@
 
 * 创建服务
     ```
-    kubectl create -f httpserver.yaml -n istio-demo
+    kubectl create -f httpserver.yaml
     ```
 
 * 生成证书

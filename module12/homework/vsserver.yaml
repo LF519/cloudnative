@@ -15,3 +15,9 @@ spec:
             host: httpserver-service.istio-demo.svc.cluster.local
             port:
               number: 8080
+      # 故障注入, 30%的请求产生500错误
+      fault:
+        abort:
+          httpStatus: 500
+          percentage:
+            value: 30
