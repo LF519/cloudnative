@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: httpserver
+  namespace: istio-demo
+data:
+  config.yml: |
+    # 服务启动的port
+    server:
+      port: 8080
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: httpserver
+  name: httpserver
+  namespace: istio-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpserver
+  template:
+    metadata:
+      annotations:
+        # promethues
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"      
+      labels:
+        app: httpserver
+    spec:
+      containers:
+        - image: lfdockerhub/httpserver:v1.0.0-metrics
+          imagePullPolicy: IfNotPresent
+          name: httpserver
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:  # 资源需求和 QoS 保证
+            limits:
+              cpu: "1"
+            requests:
+              cpu: "100m"
+          livenessProbe:  # 探活
+            httpGet:
+              scheme: HTTP
+              port: 8080
+              path: /healthz
+          lifecycle:  # 优雅终止
+            preStop:
+              exec:
+                command: [ "/bin/sh","-c","kill -15 1" ]  # 在代码中已经设置了监听SIGTERM信号
+          volumeMounts:
+            - name: config  # 配置与代码分离
+              mountPath: "/usr/local/httpserver/config"
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: httpserver
+
+---
+# service配置
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpserver-service
+  namespace: istio-demo
+spec:
+  selector:
+    app: httpserver
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
