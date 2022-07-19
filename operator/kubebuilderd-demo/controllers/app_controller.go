@@ -43,6 +43,11 @@ type AppReconciler struct {
 //+kubebuilder:rbac:groups=ingress.baiding.tech,resources=apps/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=ingress.baiding.tech,resources=apps/finalizers,verbs=update
 
+// 添加操作kubenetes内建资源的权限
+//+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=services,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=networking.k8s.io,resources=ingresses,verbs=get;list;watch;create;update;patch;delete
+
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
@@ -126,10 +131,6 @@ func (r *AppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	}
 
 	// 3. Ingress的处理, ingress的配置可能为空
-	if !app.Spec.EnableService {
-		return ctrl.Result{}, nil
-	}
-
 	oldIngress := &networkingV1.Ingress{}
 	if err = r.Get(ctx, req.NamespacedName, oldIngress); err != nil {
 		if errors.IsNotFound(err) && app.Spec.EnableIngress {
