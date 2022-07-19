@@ -8,4 +8,4 @@ webhook:
   port: 9443
 leaderElection:
   leaderElect: true
-  resourceName: 94ba189a.baiding.tech
+  resourceName: 441dcaa7.baiding.tech
