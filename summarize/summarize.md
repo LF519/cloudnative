@@ -59,57 +59,57 @@
 
 ##### 资源定义
 
-  *  编写 `manifests/crd/app-crd.yaml`, 定义`crd`
-  
-     ```yaml
-     apiVersion: apiextensions.k8s.io/v1
-     kind: CustomResourceDefinition
-     metadata:
-       name: apps.myapp.k8s.io
-       annotations:
-         "api-approved.kubernetes.io": "unapproved, experimental-only; please get an approval from Kubernetes API reviewers if you're trying to develop a CRD in the *.k8s.io or *.kubernetes.io groups"
-     spec:
-       group: myapp.k8s.io
-       versions:
-         - name: v1
-           served: true
-           storage: true
-           schema:
-             openAPIV3Schema:
-               type: object
-               properties:
-                 spec:
-                   type: object
-                   properties:
-                     deployment:
-                       type: object
-                       properties:
-                         name:
-                           type: string
-                         image: 
-                           type: string
-                         replicas:
-                           type: integer
-                           format: int32
-                     service:
-                       type: object
-                       properties:
-                         name:
-                           type: string
-                 status:
-                   type: object
-                   properties:
-                     availableReplicas:
-                       type: integer
+*  编写 `manifests/crd/app-crd.yaml`, 定义`crd`
+
+    ```yaml
+    apiVersion: apiextensions.k8s.io/v1
+    kind: CustomResourceDefinition
+    metadata:
+      name: apps.myapp.k8s.io
+      annotations:
+        "api-approved.kubernetes.io": "unapproved, experimental-only; please get an approval from Kubernetes API reviewers if you're trying to develop a CRD in the *.k8s.io or *.kubernetes.io groups"
+    spec:
+      group: myapp.k8s.io
+      versions:
+        - name: v1
+          served: true
+          storage: true
+          schema:
+            openAPIV3Schema:
+              type: object
+              properties:
+                spec:
+                  type: object
+                  properties:
+                    deployment:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        image: 
+                          type: string
+                        replicas:
+                          type: integer
+                          format: int32
+                    service:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                status:
+                  type: object
+                  properties:
+                    availableReplicas:
+                      type: integer
       names:
         kind: App
         plural: apps
       scope: Namespaced
     ```
-    
+
     
 
-  * `manifests/example/example-app.yaml`
+*  `manifests/example/example-app.yaml`
 
     ```yaml
     apiVersion: myapp.k8s.io/v1
@@ -128,7 +128,7 @@
 
     
 
-* `pkg/apis/myapp/register.go` ，用来放置后面要用到的全局变量
+*  `pkg/apis/myapp/register.go` ，用来放置后面要用到的全局变量
 
   ```go
   package myapp
@@ -142,14 +142,14 @@
 
   
 
-  * `apps/pkg/myapp/v1/doc.go`
+*  `apps/pkg/myapp/v1/doc.go`
 
-     ```go
-     // +k8s:deepcopy-gen=package
-     // +groupName=myapp.k8s.io
-     package v1
-     
-     ```
+   ```go
+   // +k8s:deepcopy-gen=package
+   // +groupName=myapp.k8s.io
+   package v1
+   
+   ```
 
 
 
