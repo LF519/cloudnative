@@ -75,73 +75,73 @@
            served: true
            storage: true
            schema:
-          openAPIV3Schema:
+             openAPIV3Schema:
                type: object
-            properties:
-              spec:
-                type: object
-                properties:
-                  deployment:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      image: 
-                        type: string
-                      replicas:
-                        type: integer
-                        format: int32
-                  service:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-              status:
-                type: object
-                properties:
-                  availableReplicas:
-                    type: integer
-    names:
-      kind: App
-      plural: apps
-    scope: Namespaced
+               properties:
+                 spec:
+                   type: object
+                   properties:
+                     deployment:
+                       type: object
+                       properties:
+                         name:
+                           type: string
+                         image: 
+                           type: string
+                         replicas:
+                           type: integer
+                           format: int32
+                     service:
+                       type: object
+                       properties:
+                         name:
+                           type: string
+                 status:
+                   type: object
+                   properties:
+                     availableReplicas:
+                       type: integer
+      names:
+        kind: App
+        plural: apps
+      scope: Namespaced
+    ```
+    
+    
+    
+  * `manifests/example/example-app.yaml`
+
+    ```yaml
+    apiVersion: myapp.k8s.io/v1
+    kind: App
+    metadata:
+      name: example-app
+    spec:
+      deployment:
+        name: example-app
+        image: nginx:latest
+        replicas: 2
+      service:
+        name: example-app
+    
+    ```
+
+    
+
+* `pkg/apis/myapp/register.go` ，用来放置后面要用到的全局变量
+
+  ```go
+  package myapp
+  
+  const (
+  	GroupName = "myapp.k8s.io"
+  	Version   = "v1"
+  )
+  
   ```
+
   
-  
-  
-  *  `manifests/example/example-app.yaml`
-  
-     ```yaml
-     apiVersion: myapp.k8s.io/v1
-     kind: App
-     metadata:
-       name: example-app
-     spec:
-       deployment:
-         name: example-app
-      image: nginx:latest
-         replicas: 2
-       service:
-         name: example-app
-     
-     ```
-     
-     
-     
-  *   `pkg/apis/myapp/register.go` ，用来放置后面要用到的全局变量
-  
-     ```go
-     package myapp
-     
-     const (
-     	GroupName = "myapp.k8s.io"
-     	Version   = "v1"
-     )
-     
-  ```
-     
-     
-     
+
   * `apps/pkg/myapp/v1/doc.go`
 
      ```go
@@ -151,60 +151,62 @@
      
      ```
 
-     
 
-  * `apps/pkg/myapp/v1/types.go`
 
-     ```go
-     package v1
-     
-     import (
-     	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-     )
-     
-     // +genclient
-     // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-     
-     // App is a specification for a App resource
-     type App struct {
-     	metav1.TypeMeta   `json:",inline"`
-     	metav1.ObjectMeta `json:"metadata,omitempty"`
-     
-     	Spec   AppSpec   `json:"spec"`
-     	Status AppStatus `json:"status"`
-     }
-     
-     type ServiceSpec struct {
-     	Name string `json:"name"`
-     }
-     
-     type DeploymentSpec struct {
-     	Name     string `json:"name"`
-     	Image    string `json:"image"`
-     	Replicas int32  `json:"replicas"`
-     }
-     
-     // AppSpec is the spec for a Foo resource
-     type AppSpec struct {
-     	Deployment DeploymentSpec `json:"deployment"`
-     	Service    ServiceSpec    `json:"service"`
-     }
-     
-     // AppStatus is the status for a Foo resource
-     type AppStatus struct {
-     	AvailableReplicas int32 `json:"availableReplicas"`
-     }
-     
-     // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-     
-     type AppList struct {
-     	metav1.TypeMeta `json:",inline"`
-     	metav1.ListMeta `json:"metadata"`
-     
-     	Items []App `json:"items"`
-     }
-     
-     ```
+* `apps/pkg/myapp/v1/types.go`
+
+  ```go
+  package v1
+  
+  import (
+  	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+  )
+  
+  // +genclient
+  // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+  
+  // App is a specification for a App resource
+  type App struct {
+  	metav1.TypeMeta   `json:",inline"`
+  	metav1.ObjectMeta `json:"metadata,omitempty"`
+  
+  	Spec   AppSpec   `json:"spec"`
+  	Status AppStatus `json:"status"`
+  }
+  
+  type ServiceSpec struct {
+  	Name string `json:"name"`
+  }
+  
+  type DeploymentSpec struct {
+  	Name     string `json:"name"`
+  	Image    string `json:"image"`
+  	Replicas int32  `json:"replicas"`
+  }
+  
+  // AppSpec is the spec for a Foo resource
+  type AppSpec struct {
+  	Deployment DeploymentSpec `json:"deployment"`
+  	Service    ServiceSpec    `json:"service"`
+  }
+  
+  // AppStatus is the status for a Foo resource
+  type AppStatus struct {
+  	AvailableReplicas int32 `json:"availableReplicas"`
+  }
+  
+  // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+  
+  type AppList struct {
+  	metav1.TypeMeta `json:",inline"`
+  	metav1.ListMeta `json:"metadata"`
+  
+  	Items []App `json:"items"`
+  }
+  
+  ```
+
+  
 
 * `pkg/apis/myapp/v1/register.go`
 
