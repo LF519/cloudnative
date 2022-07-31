@@ -108,7 +108,7 @@
     ```
     
     
-    
+
   * `manifests/example/example-app.yaml`
 
     ```yaml
