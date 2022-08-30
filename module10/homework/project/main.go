@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,11 +14,10 @@ import (
 	"strconv"
 	"syscall"
 	"time"
-	"math/rand"
 
-	"github.com/spf13/viper"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/golang/glog"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/spf13/viper"
 
 	"github.com/cloudnative/module10/homework/project/metrics"
 )
@@ -108,8 +108,8 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	timer := metrics.NewTimer()
 	defer timer.ObserveTotal()
 	user := r.URL.Query().Get("user")
-	delay := randInt(10,2000)
-	time.Sleep(time.Millisecond*time.Duration(delay))
+	delay := randInt(10, 2000)
+	time.Sleep(time.Millisecond * time.Duration(delay))
 	if user != "" {
 		io.WriteString(w, fmt.Sprintf("hello [%s]\n", user))
 	} else {
