@@ -130,17 +130,17 @@
 
 *  `pkg/apis/myapp/register.go` ，用来放置后面要用到的全局变量
 
-   ```go
-   package myapp
-   
-   const (
-   	GroupName = "myapp.k8s.io"
-   	Version   = "v1"
-   )
-   
-   ```
+  ```go
+  package myapp
+  
+  const (
+  	GroupName = "myapp.k8s.io"
+  	Version   = "v1"
+  )
+  
+  ```
 
-   
+  
 
 *  `apps/pkg/myapp/v1/doc.go`
 
